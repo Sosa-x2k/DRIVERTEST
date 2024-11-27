@@ -1,0 +1,62 @@
+;
+; VALORKERNEL.inf
+;
+
+[Version]
+Signature   = "$WINDOWS NT$"
+Class       = System ; TODO: specify appropriate Class
+ClassGuid   = {4d36e97d-e325-11ce-bfc1-08002be10318} ; TODO: specify appropriate ClassGuid
+Provider    = %ManufacturerName%
+CatalogFile = VALORKERNEL.cat
+DriverVer = 11/26/2024,22.21.12.900
+PnpLockdown = 1
+
+[DestinationDirs]
+DefaultDestDir = 13
+
+[SourceDisksNames]
+1 = %DiskName%,,,""
+
+[SourceDisksFiles]
+VALORKERNEL.sys  = 1,,
+
+;*****************************************
+; Install Section
+;*****************************************
+
+[Manufacturer]
+%ManufacturerName% = Standard,NTamd64.10.0...16299 ; %13% support introduced in build 16299
+
+[Standard.NTamd64.10.0...16299]
+%VALORKERNEL.DeviceDesc% = VALORKERNEL_Device, Root\VALORKERNEL ; TODO: edit hw-id
+
+[VALORKERNEL_Device.NT]
+CopyFiles = File_Copy
+
+[File_Copy]
+VALORKERNEL.sys
+
+;-------------- Service installation
+[VALORKERNEL_Device.NT.Services]
+AddService = VALORKERNEL,%SPSVCINST_ASSOCSERVICE%, VALORKERNEL_Service_Inst
+
+; -------------- VALORKERNEL driver install sections
+[VALORKERNEL_Service_Inst]
+DisplayName    = %VALORKERNEL.SVCDESC%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %13%\VALORKERNEL.sys
+
+[VALORKERNEL_Device.NT.Wdf]
+KmdfService = VALORKERNEL, VALORKERNEL_wdfsect
+
+[VALORKERNEL_wdfsect]
+KmdfLibraryVersion = 1.15
+
+[Strings]
+SPSVCINST_ASSOCSERVICE = 0x00000002
+ManufacturerName = "<Your manufacturer name>" ;TODO: Replace with your manufacturer name
+DiskName = "VALORKERNEL Installation Disk"
+VALORKERNEL.DeviceDesc = "VALORKERNEL Device"
+VALORKERNEL.SVCDESC = "VALORKERNEL Service"
